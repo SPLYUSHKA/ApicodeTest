@@ -76,7 +76,7 @@ namespace AprocodeTestApi.Data.EntityFramework
         {
             foreach (Genre genre in item.Genres)
             {
-                if (!context.Genres.Contains(genre))
+                if (!await context.Genres.ContainsAsync(genre))
                 {
                     throw new NotFoundException($"Жанр {genre.Id} не найден");
                 }
@@ -84,7 +84,9 @@ namespace AprocodeTestApi.Data.EntityFramework
         }
         public async Task checkGameExists(int gameId) 
         {
-            if (await context.Games.FindAsync(gameId) is null) 
+            if (await context.Games
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Id == gameId) is null) 
             {
                 throw new NotFoundException($"Игра {gameId} не найдена");
             }
